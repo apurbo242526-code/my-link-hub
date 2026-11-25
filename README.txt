@@ -1,1 +1,1 @@
-My Link Hub\n\nOpen index.html in a browser. Tap Settings to replace the four names and URLs.\nFor installable PWA support, host these files on HTTPS, open the site in Chrome, and use Add to Home screen.\n
+Upload all files in this folder to your repository root.

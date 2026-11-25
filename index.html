@@ -38,6 +38,6 @@ const settings=document.getElementById("settings");
 document.getElementById("editBtn").onclick=()=>{document.getElementById("fields").innerHTML=data.map((x,i)=>`<div class="field"><label>Link 0${i+1} এর নাম</label><input id="name${i}" value="${escapeHTML(x.name)}" placeholder="Link name"><label style="margin-top:8px">URL</label><input id="url${i}" value="${escapeHTML(x.url)}" placeholder="https://..."></div>`).join("");settings.classList.toggle("show")};
 document.getElementById("save").onclick=()=>{data=data.map((_,i)=>({name:document.getElementById("name"+i).value.trim()||"Link "+(i+1),url:document.getElementById("url"+i).value.trim()}));localStorage.setItem("linkhub-data",JSON.stringify(data));render();settings.classList.remove("show")};
 document.getElementById("cancel").onclick=()=>settings.classList.remove("show");render();
-if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js").catch(()=>{});}
 </script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(console.error));}</script>
 </body></html>
