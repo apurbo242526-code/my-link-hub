@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#0f172a">
+<title>My Link Hub</title>
+<link rel="manifest" href="manifest.json">
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Noto Sans Bengali",sans-serif;background:linear-gradient(160deg,#0f172a,#172554 65%,#0e7490);color:#fff;min-height:100vh;padding:24px}
+main{max-width:520px;margin:0 auto}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
+h1{font-size:26px;margin:0}.sub{color:#cbd5e1;margin-top:8px}.panel{background:#ffffff12;border:1px solid #ffffff22;border-radius:22px;padding:18px;backdrop-filter:blur(8px)}
+.links{display:grid;gap:14px;margin-top:22px}.link{display:flex;align-items:center;gap:14px;text-decoration:none;color:#fff;background:#ffffff12;border:1px solid #ffffff22;border-radius:17px;padding:17px;transition:.15s}.link:hover{background:#ffffff25;transform:translateY(-1px)}
+.num{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-weight:800;background:#ffffff20}.label{font-size:17px;font-weight:650}.url{font-size:12px;color:#cbd5e1;margin-top:3px;overflow-wrap:anywhere}
+button{border:0;border-radius:12px;padding:11px 14px;background:#e2e8f0;color:#0f172a;font-weight:700;cursor:pointer}.edit{background:#ffffff18;color:white;border:1px solid #ffffff30}.settings{display:none;margin-top:20px}.settings.show{display:block}.field{margin:13px 0}.field label{display:block;margin-bottom:6px;font-size:14px}.field input{width:100%;padding:12px;border-radius:10px;border:1px solid #cbd5e1;font-size:15px}.actions{display:flex;gap:10px;margin-top:16px}.hint{font-size:13px;color:#cbd5e1;margin-top:20px}
+</style>
+</head>
+<body>
+<main>
+<div class="top"><div><h1 id="appTitle">My Link Hub</h1><div class="sub">আপনার প্রয়োজনীয় লিংকগুলো এক জায়গায়</div></div><button class="edit" id="editBtn">⚙ সেটিংস</button></div>
+<div class="panel"><div class="links" id="links"></div>
+<div class="settings" id="settings"><hr style="border-color:#ffffff30"><h3>লিংক পরিবর্তন করুন</h3>
+<div id="fields"></div><div class="actions"><button id="save">Save</button><button class="edit" id="cancel">Cancel</button></div>
+</div></div>
+<div class="hint">বাটনে চাপ দিয়ে লিংক খুলুন। ⚙ সেটিংস থেকে নাম ও লিংক পরিবর্তন করতে পারবেন।</div>
+</main>
+<script>
+const defaults=[
+{name:"Link One",url:"https://example.com"},
+{name:"Link Two",url:"https://example.com"},
+{name:"Link Three",url:"https://example.com"},
+{name:"Link Four",url:"https://example.com"}];
+let data=JSON.parse(localStorage.getItem("linkhub-data")||"null")||defaults;
+function render(){document.getElementById("links").innerHTML=data.map((x,i)=>`<a class="link" href="${safeURL(x.url)}" target="_blank" rel="noopener"><div class="num">0${i+1}</div><div><div class="label">${escapeHTML(x.name)}</div><div class="url">${escapeHTML(x.url)}</div></div><div style="margin-left:auto;font-size:22px">↗</div></a>`).join("")}
+function safeURL(u){try{let x=new URL(u);return ["http:","https:"].includes(x.protocol)?x.href:"#"}catch{return "#"}}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+const settings=document.getElementById("settings");
+document.getElementById("editBtn").onclick=()=>{document.getElementById("fields").innerHTML=data.map((x,i)=>`<div class="field"><label>Link 0${i+1} এর নাম</label><input id="name${i}" value="${escapeHTML(x.name)}" placeholder="Link name"><label style="margin-top:8px">URL</label><input id="url${i}" value="${escapeHTML(x.url)}" placeholder="https://..."></div>`).join("");settings.classList.toggle("show")};
+document.getElementById("save").onclick=()=>{data=data.map((_,i)=>({name:document.getElementById("name"+i).value.trim()||"Link "+(i+1),url:document.getElementById("url"+i).value.trim()}));localStorage.setItem("linkhub-data",JSON.stringify(data));render();settings.classList.remove("show")};
+document.getElementById("cancel").onclick=()=>settings.classList.remove("show");render();
+if("serviceWorker" in navigator){navigator.serviceWorker.register("./sw.js").catch(()=>{});}
+</script>
+</body></html>
